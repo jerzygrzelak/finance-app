@@ -1,0 +1,189 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username          String             @unique
+  email             String             @unique
+  password          String
+  accounts          Account[]
+  assets            Asset[]
+  trips             Trip[]
+  transactions      Transaction[]
+  exchanges         Exchange[]
+  internalTransfers InternalTransfer[]
+  banks             Bank[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model Currency {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  symbol         String
+  code           String
+  name           String
+  namePlural     String
+  accounts       Account[]
+  assets         Asset[]
+  transactions   Transaction[]
+  currenciesTo   Exchange[]    @relation("currencyFrom")
+  currenciesFrom Exchange[]    @relation("currencyTo")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model Bank {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String    @db.Uuid
+  accounts  Account[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Account {
+  id                          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                        String
+  balance                     Float
+  currency                    Currency           @relation(fields: [currencyId], references: [id])
+  currencyId                  String             @db.Uuid
+  bank                        Bank               @relation(fields: [bankId], references: [id])
+  bankId                      String             @db.Uuid
+  user                        User               @relation(fields: [userId], references: [id])
+  userId                      String             @db.Uuid
+  transactions                Transaction[]
+  exchanges                   Exchange[]
+  internalTransferAccountFrom InternalTransfer[] @relation("accountFrom")
+  internalTransferAccountTo   InternalTransfer[] @relation("accountTo")
+  createdAt                   DateTime           @default(now())
+  updatedAt                   DateTime           @updatedAt
+}
+
+model Asset {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  description String
+  amount      Float
+  currency    Currency @relation(fields: [currencyId], references: [id])
+  currencyId  String   @db.Uuid
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @db.Uuid
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TransactionCategory {
+  id            String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  subcategories TransactionSubcategory[]
+  transactions  Transaction[]
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+}
+
+model TransactionSubcategory {
+  id         String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String
+  category   TransactionCategory @relation(fields: [categoryId], references: [id])
+  categoryId String              @db.Uuid
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+}
+
+model Trip {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String
+  startDate    DateTime
+  endDate      DateTime
+  user         User          @relation(fields: [userId], references: [id])
+  userId       String        @db.Uuid
+  tripPlaces   TripPlace[]
+  transactions Transaction[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model TripPlace {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String
+  trip         Trip          @relation(fields: [tripId], references: [id])
+  tripId       String        @db.Uuid
+  transactions Transaction[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Transaction {
+  id                    String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                  String
+  date                  DateTime
+  amount                Float
+  account               Account             @relation(fields: [accountId], references: [id])
+  accountId             String              @db.Uuid
+  currency              Currency            @relation(fields: [currencyId], references: [id])
+  currencyId            String              @db.Uuid
+  transactionType       TransactionType
+  transactionCategory   TransactionCategory @relation(fields: [transactionCategoryId], references: [id])
+  transactionCategoryId String              @db.Uuid
+  trip                  Trip                @relation(fields: [tripId], references: [id])
+  tripId                String              @db.Uuid
+  tripPlace             TripPlace           @relation(fields: [tripPlaceId], references: [id])
+  tripPlaceId           String              @db.Uuid
+  user                  User                @relation(fields: [userId], references: [id])
+  userId                String              @db.Uuid
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+}
+
+model Exchange {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String
+  date               DateTime
+  rate               Float
+  currencyFromAmount Float
+  currencyToAmount   Float
+  account            Account  @relation(fields: [accountId], references: [id])
+  accountId          String   @db.Uuid
+  currencyFrom       Currency @relation("currencyFrom", fields: [currencyFromId], references: [id])
+  currencyFromId     String   @db.Uuid
+  currencyTo         Currency @relation("currencyTo", fields: [currencyToId], references: [id])
+  currencyToId       String   @db.Uuid
+  user               User     @relation(fields: [userId], references: [id])
+  userId             String   @db.Uuid
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model InternalTransfer {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  date          DateTime
+  amount        Float
+  accountFrom   Account  @relation("accountFrom", fields: [accountFromId], references: [id])
+  accountFromId String   @db.Uuid
+  accountTo     Account  @relation("accountTo", fields: [accountToId], references: [id])
+  accountToId   String   @db.Uuid
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String   @db.Uuid
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+enum TransactionType {
+  ExternalTransfer
+  Income
+  Expense
+  LoanDisbursement
+  LoanReceipt
+}
