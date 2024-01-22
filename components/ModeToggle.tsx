@@ -10,7 +10,7 @@ export function ModeToggle() {
     const { setTheme } = useTheme();
 
     function handleSwitch(checked: boolean) {
-        setTimeout(() => (checked ? setTheme('dark') : setTheme('light')), 100);
+        setTimeout(() => (checked ? setTheme('dark') : setTheme('light')), 150);
     }
 
     return (
