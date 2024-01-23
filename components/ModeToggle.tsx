@@ -5,21 +5,37 @@ import * as React from 'react';
 import { useTheme } from 'next-themes';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Skeleton } from '@/components/ui/skeleton';
+import { MoonIcon, SunIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export function ModeToggle() {
-    const { setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+    const { theme, setTheme } = useTheme();
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!mounted) {
+        return (
+            <Skeleton className="w-[120px] h-[35px] rounded-full" />
+        );
+    }
 
     function handleSwitch(checked: boolean) {
         setTimeout(() => (checked ? setTheme('dark') : setTheme('light')), 150);
     }
 
     return (
+        // <Skeleton className="w-[120px] h-[35px] rounded-full" />
         <div className="flex items-center space-x-2">
+            <SunIcon/>
             <Switch
-                id="dark-mode"
+                defaultChecked={theme === 'dark'}
                 onCheckedChange={(checked) => handleSwitch(checked)}
             />
-            <Label htmlFor="dark-mode">Dark Mode</Label>
+            <MoonIcon/>
         </div>
     );
 }

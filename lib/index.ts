@@ -6,6 +6,6 @@
 * Created by ursus
 * on 22.01.2024
 *****************************************************************/
-export * from './prisma';
+export * from './prisma/prisma';
 export * from './utils';
 
