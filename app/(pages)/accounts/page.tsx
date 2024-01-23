@@ -1,6 +1,6 @@
 
 export default function AccountsPage() {
     return (
-      <h1>Accounts</h1>
+      <h1 className='md:ml-64'>Accounts</h1>
     );
 }

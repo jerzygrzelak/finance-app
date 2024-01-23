@@ -5,14 +5,12 @@ import { redirect } from "next/navigation";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
-  console.log(session);
   if (session) {
     const username = session?.user.username;
     return (
-      <main>
+      <div className='md:ml-64'>
         {username && <p>Hello, {username}!</p>}
-        <LogOut />
-      </main>
+      </div>
     );
   } else {
     redirect("/auth/login");

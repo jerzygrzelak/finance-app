@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -19,11 +19,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ModeToggle } from '@/components/ModeToggle';
 import ReCAPTCHA from 'react-google-recaptcha';
 
-interface LoginFormInput {
-    username: string;
-    password: string;
-}
-
 const formSchema = z.object({
     username: z.string().min(1, {
         message: 'Username must be filled.',
@@ -35,6 +30,7 @@ const formSchema = z.object({
 
 export default function LogInForm() {
     const router = useRouter();
+    const [captcha, setCaptcha] = useState<string | null>();
     const { status } = useSession();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -77,7 +73,7 @@ export default function LogInForm() {
     }
 
     return (
-        <div className="flex flex-col w-64 border-2 border-slate-600 dark:border-white m-2 py-4 px-5 rounded-lg">
+        <div className="flex flex-col w-auto border-2 border-slate-600 dark:border-white m-2 py-4 px-5 rounded-lg">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -121,12 +117,18 @@ export default function LogInForm() {
                             Invalid credentials.
                         </p>
                     )}
-                    <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}/>
+                    <ReCAPTCHA
+                        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                        onChange={setCaptcha}
+                    />
                     <div className='mt-2 flex items-center justify-between'>
-                        <Button type="submit">
+                        <Button
+                            type="submit"
+                            disabled={!captcha}
+                        >
                             Log in
                         </Button>
-                        <ModeToggle/>
+                        {/*<ModeToggle/>*/}
                     </div>
                 </form>
             </Form>

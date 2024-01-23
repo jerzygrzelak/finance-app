@@ -2,25 +2,23 @@
 
 import * as React from 'react';
 
-import { useTheme } from 'next-themes';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MoonIcon, SunIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
 
 export function ModeToggle() {
     const [mounted, setMounted] = useState(false);
     const { theme, setTheme } = useTheme();
 
     useEffect(() => {
-        setMounted(true)
-    }, [])
+        setMounted(true);
+    }, []);
 
     if (!mounted) {
-        return (
-            <Skeleton className="w-[120px] h-[35px] rounded-full" />
-        );
+        return <Skeleton className="w-[120px] h-[35px] rounded-full" />;
     }
 
     function handleSwitch(checked: boolean) {
@@ -30,12 +28,12 @@ export function ModeToggle() {
     return (
         // <Skeleton className="w-[120px] h-[35px] rounded-full" />
         <div className="flex items-center space-x-2">
-            <SunIcon/>
+            <SunIcon />
             <Switch
                 defaultChecked={theme === 'dark'}
-                onCheckedChange={(checked) => handleSwitch(checked)}
+                onCheckedChange={(checked: boolean) => handleSwitch(checked)}
             />
-            <MoonIcon/>
+            <MoonIcon />
         </div>
     );
 }
