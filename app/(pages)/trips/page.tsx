@@ -1,6 +1,10 @@
+import PageHeader from '@/components/PageHeader';
+import React from 'react';
 
 export default function TripsPage() {
     return (
-      <h1 className='md:ml-64'>Trips</h1>
+        <div className="sm:ml-5 md:ml-64 mr-5">
+            <PageHeader headerText="Trips" />
+        </div>
     );
 }

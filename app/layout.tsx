@@ -11,6 +11,7 @@ import { usePathname } from 'next/navigation';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import SidebarNav from '@/components/SidebarNav';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
     title: 'Finance App',
@@ -60,6 +61,7 @@ export default function RootLayout({
                                 {children}
                             </main>
                         </div>
+                        <Toaster />
                     </AuthProvider>
                 </ThemeProvider>
             </body>

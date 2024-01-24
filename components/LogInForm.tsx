@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ModeToggle } from '@/components/ModeToggle';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 const formSchema = z.object({
@@ -42,7 +41,6 @@ export default function LogInForm() {
 
     const onSubmit = async (formValue: z.infer<typeof formSchema>) => {
         try {
-            console.log(form);
             const signInResponse = await signIn('credentials', {
                 username: formValue.username,
                 password: formValue.password,
@@ -52,16 +50,12 @@ export default function LogInForm() {
             if (signInResponse?.ok) {
                 router.refresh();
             } else {
-                form.setError('root', { message: 'error' });
-                console.log(form);
+                form.setError('root', { message: 'Invalid credentials.' });
             }
-        } catch (err) {
-            console.log(err);
-        }
+        } catch (err) {}
     };
 
     useEffect(() => {
-        console.log(status);
         if (status === 'authenticated') {
             router.refresh();
             router.push('/');
@@ -114,25 +108,20 @@ export default function LogInForm() {
                     />
                     {form.formState.errors.root && (
                         <p className="text-sm font-medium text-destructive">
-                            Invalid credentials.
+                            {form.formState.errors.root.message}
                         </p>
                     )}
                     <ReCAPTCHA
                         sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
                         onChange={setCaptcha}
                     />
-                    <div className='mt-2 flex items-center justify-between'>
-                        <Button
-                            type="submit"
-                            disabled={!captcha}
-                        >
+                    <div className="mt-2 flex items-center justify-between">
+                        <Button type="submit" disabled={!captcha}>
                             Log in
                         </Button>
-                        {/*<ModeToggle/>*/}
                     </div>
                 </form>
             </Form>
-
         </div>
     );
 }
