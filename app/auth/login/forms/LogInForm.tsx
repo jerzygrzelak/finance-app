@@ -67,7 +67,7 @@ export default function LogInForm() {
     }
 
     return (
-        <div className="flex flex-col w-auto border-2 border-slate-600 dark:border-white m-2 py-4 px-5 rounded-lg">
+        // <div className="flex flex-col w-auto border-2 border-slate-600 dark:border-white m-2 py-4 px-5 rounded-lg">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -122,6 +122,6 @@ export default function LogInForm() {
                     </div>
                 </form>
             </Form>
-        </div>
+        // </div>
     );
 }

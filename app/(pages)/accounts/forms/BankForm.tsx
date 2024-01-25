@@ -17,10 +17,8 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
-type OnSubmitSuccessCallback = () => void;
-
 interface BankFormProps {
-    onSubmitSuccess: OnSubmitSuccessCallback;
+    onSubmitSuccess: () => void;
 }
 
 const formSchema = z.object({

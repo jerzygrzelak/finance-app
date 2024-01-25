@@ -28,7 +28,7 @@ export async function POST(req: Request) {
                     userId: session.user.id
                 }
             });
-            console.log(newAccount);
+
             if (newAccount) {
                 await prisma.accountBalance.create({
                    data: {

@@ -1,9 +1,9 @@
 'use client';
 
-import React, { SyntheticEvent, useState } from 'react';
+import React, { useState } from 'react';
 import * as z from 'zod';
 import { ZodTypeAny } from 'zod';
-import { ChangeHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
     Form,
@@ -58,7 +58,7 @@ export default function AccountForm({ onSubmitSuccess, bankId }: AccountFormProp
     const { data } = useSWR('/api/currency', fetcher);
     const currencies = data?.currencies
         .sort((a: any, b: any) => {
-            const order = ['PLN', 'EUR', 'THB', 'MYR', 'JPY', 'HKD', 'USD', 'SGD'];
+            const order = ['PLN', 'EUR', 'THB', 'MYR', 'JPY', 'HKD', 'SGD', 'USD'];
 
             const indexA = order.indexOf(a.code);
             const indexB = order.indexOf(b.code);
@@ -86,7 +86,7 @@ export default function AccountForm({ onSubmitSuccess, bankId }: AccountFormProp
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: '',
-            balance: 0,
+            balance: '0',
             currency: undefined,
         },
     });
@@ -97,7 +97,7 @@ export default function AccountForm({ onSubmitSuccess, bankId }: AccountFormProp
             form.setValue('balance', '0');
         }
 
-        if (balance[0] === '0') {
+        if (balance[0] === '0' && balance.length > 1) {
             form.setValue('balance', '0.' + parseFloat(balance));
         }
     }
@@ -187,7 +187,7 @@ export default function AccountForm({ onSubmitSuccess, bankId }: AccountFormProp
                                         >
                                             {field.value
                                                 ? currencies.find(
-                                                    (currency) => currency.value === field.value
+                                                    (currency: any) => currency.value === field.value
                                                 )?.label
                                                 : "Select a currency"}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -200,8 +200,8 @@ export default function AccountForm({ onSubmitSuccess, bankId }: AccountFormProp
                                         <CommandEmpty>No language found.</CommandEmpty>
 
                                             <CommandGroup>
-                                                <ScrollArea className='h-48 w-48'>
-                                                {currencies.map((currency) => (
+                                                <ScrollArea className='h-56 w-48'>
+                                                {currencies.map((currency: any) => (
                                                     <CommandItem
                                                         value={currency.label}
                                                         key={currency.value}

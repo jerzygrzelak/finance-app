@@ -18,7 +18,7 @@ export const SIDENAV_ITEMS: SideNavItem[] = [
         icon: <CircleDollarSignIcon />,
     },
     {
-        title: 'Accounts & assets',
+        title: 'Accounts',
         path: '/accounts',
         icon: <LandmarkIcon />,
     },
